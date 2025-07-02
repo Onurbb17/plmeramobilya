@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Palmera Mobilya | Analiz Raporu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Palmera Mobilya için Ykbsoft tarafından hazırlanan, interaktif grafikler ve modern tasarım içeren kurumsal analiz raporu.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg-dark: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 100%);
+      --card-bg-dark: rgba(22, 27, 34, 0.95);
+      --text-dark: #e2e8f0;
+      --heading-dark: #f7fafc;
+      --primary: #4299e1;
+      --primary-glow: rgba(66, 153, 225, 0.4);
+      --secondary: #ed8936;
+      --accent: #38b2ac;
+      --border-dark: rgba(255, 255, 255, 0.1);
+      --shadow-dark: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+      --font-body: 'Inter', sans-serif;
+      --font-heading: 'Playfair Display', serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-dark);
+      color: var(--text-dark);
+      min-height: 100vh;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(66, 153, 225, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(237, 137, 54, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(56, 178, 172, 0.1) 0%, transparent 50%);
+      z-index: -1;
+      animation: float 20s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      33% { transform: translateY(-20px) rotate(1deg); }
+      66% { transform: translateY(10px) rotate(-1deg); }
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .header {
+      text-align: center;
+      padding: 4rem 2rem;
+      position: relative;
+      margin-bottom: 3rem;
+    }
+
+    .logo {
+      max-height: 70px;
+      margin-bottom: 2rem;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.15));
+      transition: transform 0.3s ease;
+    }
+    .logo:hover { transform: scale(1.05); }
+
+    .title {
+      font-family: var(--font-heading);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      margin-bottom: 1rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+      background: linear-gradient(135deg, #4299e1 0%, #ed8936 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      font-size: 1.25rem;
+      font-weight: 300;
+      color: var(--text-dark);
+      opacity: 0.8;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .grid-full {
+      grid-column: 1 / -1;
+    }
+
+    .card {
+      background: var(--card-bg-dark);
+      border: 1px solid var(--border-dark);
+      border-radius: 20px;
+      padding: 2rem;
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-dark);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+      border-radius: 20px 20px 0 0;
+    }
+
+    .card h2 {
+      font-family: var(--font-heading);
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--heading-dark);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .card h2 .icon {
+      font-size: 1.5em;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .card img {
+      width: 100%;
+      border-radius: 12px;
+      margin: 1.5rem 0;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      transition: transform 0.3s ease;
+    }
+    .card img:hover { transform: scale(1.02); }
+
+    .chart-container {
+      height: 400px;
+      position: relative;
+      margin: 1rem 0;
+    }
+
+    .chart-container.small {
+      height: 300px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, rgba(66, 153, 225, 0.05), rgba(237, 137, 54, 0.05));
+      border: 1px solid var(--border-dark);
+      border-radius: 16px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    .stat-card:hover { transform: translateY(-4px); }
+
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-dark);
+      opacity: 0.7;
+    }
+
+    .highlight { 
+      color: #f56565; 
+      font-weight: 600; 
+      background: rgba(245, 101, 101, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .success { 
+      color: #48bb78; 
+      font-weight: 600;
+      background: rgba(72, 187, 120, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .content-section {
+      line-height: 1.8;
+      font-size: 1.05rem;
+    }
+
+    .content-section ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .content-section li {
+      margin-bottom: 1rem;
+      padding-left: 1.5rem;
+      position: relative;
+    }
+
+    .content-section li::before {
+      content: '▶';
+      position: absolute;
+      left: 0;
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    .recommendations {
+      background: linear-gradient(135deg, rgba(66, 153, 225, 0.05), rgba(56, 178, 172, 0.05));
+      border: 1px solid var(--accent);
+      border-radius: 16px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+
+    .recommendations h3 {
+      color: var(--accent);
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .recommendations ol {
+      counter-reset: recommendation-counter;
+      list-style: none;
+      padding: 0;
+    }
+
+    .recommendations ol li {
+      counter-increment: recommendation-counter;
+      margin-bottom: 1.5rem;
+      padding-left: 3rem;
+      position: relative;
+    }
+
+    .recommendations ol li::before {
+      content: counter(recommendation-counter);
+      position: absolute;
+      left: 0;
+      top: 0;
+      background: var(--accent);
+      color: white;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    .recommendations strong {
+      color: var(--heading-dark);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      margin-top: 4rem;
+      border-top: 1px solid var(--border-dark);
+      background: var(--card-bg-dark);
+      border-radius: 20px;
+      backdrop-filter: blur(20px);
+    }
+
+    .footer-text {
+      font-size: 1rem;
+      color: var(--text-dark);
+      opacity: 0.8;
+    }
+
+    .footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+    .footer a:hover { color: var(--secondary); }
+
+    @media (max-width: 768px) {
+      .container { padding: 1rem; }
+      .grid { grid-template-columns: 1fr; gap: 1.5rem; }
+      .header { padding: 2rem 1rem; }
+      .card { padding: 1.5rem; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .recommendations ol li { padding-left: 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header class="header">
+      <img src="https://www.palmera.com.tr/Uploads/Logo/logo_1.png" alt="Palmera Mobilya Logo" class="logo" onerror="this.style.display='none'">
+      <h1 class="title">Palmera Mobilya Analiz Raporu</h1>
+      <p class="subtitle">Palmera Mobilya için Ykbsoft tarafından hazırlanan yeni nesil, interaktif performans değerlendirmesi</p>
+    </header>
+
+    <main>
+      <!-- Performans Karnesi -->
+      <div class="grid">
+        <div class="card grid-full">
+          <h2><span class="icon">📊</span>Genel Performans Karnesi</h2>
+          <div class="chart-container">
+            <canvas id="performanceChart"></canvas>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value">88</div>
+              <div class="stat-label">Güvenlik Skoru</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">70</div>
+              <div class="stat-label">İçerik & SEO</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">42</div>
+              <div class="stat-label">Performans</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">3.79s</div>
+              <div class="stat-label">Yüklenme Süresi</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">65</div>
+              <div class="stat-label">Erişilebilirlik</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">2.32s</div>
+              <div class="stat-label">TTFB</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analiz Detayları -->
+      <div class="grid">
+        <div class="card">
+          <h2><span class="icon">🔍</span>SEO Odak Alanları</h2>
+          <div class="chart-container small">
+            <canvas id="seoChart"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2><span class="icon">🛡️</span>Güvenlik Dağılımı</h2>
+          <div class="chart-container small">
+            <canvas id="securityChart"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2><span class="icon">📱</span>Mobil Performans</h2>
+          <div class="chart-container small">
+            <canvas id="mobileChart"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2><span class="icon">⚡</span>Sayfa Hızı Metrikleri</h2>
+          <div class="chart-container small">
+            <canvas id="speedChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detaylı Analiz Bölümleri -->
+      <div class="grid">
+        <div class="card">
+          <h2><span class="icon">🔒</span>Altyapı ve Güvenlik Analizi</h2>
+          <div class="content-section">
+            <p>Sitenin mevcut altyapısı, kullanılan teknolojiler ve güvenlik yapılandırmaları incelenmiştir. Güvenlik başlıkları ve sunucu konfigürasyonları bu bölümde değerlendirilmektedir.</p>
+            <img src="image1" alt="Altyapı ve Güvenlik Analizi Görseli" />
+            <ul>
+              <li><strong>SSL Sertifikası:</strong> <span class="success">Aktif</span> - Let's Encrypt sertifikası kullanılıyor</li>
+              <li><strong>HTTPS Yönlendirmesi:</strong> <span class="success">Çalışıyor</span> - HTTP trafiği otomatik olarak HTTPS'e yönlendiriliyor</li>
+              <li><strong>Güvenlik Başlıkları:</strong> <span class="highlight">Eksik</span> - CSP, HSTS, X-Frame-Options başlıkları eksik</li>
+              <li><strong>Sunucu Yazılımı:</strong> Apache/2.4.41 - Güncel versiyon kullanılıyor</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2><span class="icon">🎯</span>Anahtar Kelime ve Sıralama Analizi</h2>
+          <div class="content-section">
+            <img src="image2" alt="Genç odası anahtar kelimesi sıralama analizi görseli" />
+            <ul>
+              <li>Palmera, "genç odası" anahtar kelimesinde Google'da <span class="highlight">3. sayfa 27. sırada</span> yer almaktadır.</li>
+              <li><strong>Hedef Anahtar Kelimeler:</strong> "genç odası", "çocuk odası", "mobilya", "yatak odası takımı"</li>
+              <li><strong>Rakip Analizi:</strong> Kelebek (1. sıra), Doğtaş (2. sıra), Vivense (3. sıra)</li>
+              <li><strong>Arama Hacmi:</strong> "genç odası" için aylık 8,100 arama</li>
+              <li><strong>Stratejik Öneri:</strong> Daha niş ve "uzun kuyruklu" anahtar kelimelere odaklanan, kapsamlı bir içerik stratejisi geliştirilmelidir.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2><span class="icon">🏷️</span>Meta Etiket ve SEO Standartları</h2>
+          <div class="content-section">
+            <img src="image3" alt="Meta Keyword etiketi ve SEO durumu" />
+            <ul>
+              <li><strong>Meta Keywords:</strong> Bu etiket artık arama motorları tarafından dikkate alınmamaktadır. Sitede kullanılmaması <span class="success">doğrudur</span>.</li>
+              <li><strong>Title Etiketleri:</strong> <span class="highlight">Optimize edilmeli</span> - Ortalama 45 karakter, 60 karaktere çıkarılabilir</li>
+              <li><strong>Meta Description:</strong> <span class="highlight">Eksik sayfalar var</span> - 15 sayfa meta description eksik</li>
+              <li><strong>H1 Etiketleri:</strong> <span class="success">Doğru kullanım</span> - Her sayfada tek H1 etiketi mevcut</li>
+              <li><strong>Alt Etiketleri:</strong> <span class="highlight">%60 eksik</span> - 120 görselde alt etiketi eksik</li>
+              <li><strong>Canonical Etiketler:</strong> <span class="highlight">Eksik</span> - Duplicate content riski var</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2><span class="icon">⚡</span>Sunucu ve Hız Analizi</h2>
+          <div class="content-section">
+            <img src="image4" alt="Sunucu ve hız yapılandırması görseli" />
+            <ul>
+              <li><strong>İlk Bayt Zamanı (TTFB):</strong> <span class="highlight">2.32 saniye</span> - Hedef: 1 saniye altı</li>
+              <li><strong>Toplam Sayfa Boyutu:</strong> <span class="highlight">4.2 MB</span> - Hedef: 2 MB altı</li>
+              <li><strong>Görsel Optimizasyonu:</strong> <span class="highlight">Gerekli</span> - WebP formatına geçiş önerilir</li>
+              <li><strong>CSS/JS Sıkıştırma:</strong> <span class="highlight">Aktif değil</span> - Gzip/Brotli eksik</li>
+              <li><strong>Browser Caching:</strong> <span class="highlight">Eksik</span> - Cache-Control başlıkları yok</li>
+              <li><strong>CDN Kullanımı:</strong> <span class="highlight">Yok</span> - CloudFlare önerilir</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trend Analizi -->
+      <div class="grid">
+        <div class="card grid-full">
+          <h2><span class="icon">📈</span>Performans Trend Analizi</h2>
+          <div class="chart-container">
+            <canvas id="trendChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Teknik SEO Detayları -->
+      <div class="grid">
+        <div class="card grid-full">
+          <h2><span class="icon">🔧</span>Teknik SEO Durum Raporu</h2>
+          <div class="content-section">
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-value">156</div>
+                <div class="stat-label">Toplam Sayfa</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">23</div>
+                <div class="stat-label">404 Hata</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">89%</div>
+                <div class="stat-label">İndekslenme Oranı</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">12</div>
+                <div class="stat-label">Duplicate Content</div>
+              </div>
+            </div>
+            <ul>
+              <li><strong>Sitemap.xml:</strong> <span class="success">Mevcut</span> - 156 URL listeleniyor</li>
+              <li><strong>Robots.txt:</strong> <span class="success">Mevcut</span> - Doğru yapılandırılmış</li>
+              <li><strong>Schema Markup:</strong> <span class="highlight">Eksik</span> - Ürün ve organizasyon şemaları yok</li>
+              <li><strong>Internal Linking:</strong> <span class="highlight">Zayıf</span> - Ortalama 3 internal link per sayfa</li>
+              <li><strong>URL Yapısı:</strong> <span class="success">SEO Dostu</span> - Temiz URL'ler kullanılıyor</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Öneriler Bölümü -->
+      <div class="grid">
+        <div class="card grid-full">
+          <h2><span class="icon">💡</span>Stratejik İyileştirme Önerileri</h2>
+          <div class="recommendations">
+            <h3>🚀 Öncelikli Aksiyonlar</h3>
+            <ol>
+              <li>
+                <strong>Yüksek Performanslı ve Mobil Uyumlu Altyapı:</strong>
+                Modern web standartlarına uygun, hızlı yüklenen ve tüm cihazlarda sorunsuz çalışan bir altyapı oluşturulmalıdır.
+              </li>
+              <li>
+                <strong>Kapsamlı Anahtar Kelime Araştırması ve SEO Odaklı İçerik Entegrasyonu:</strong>
+                Hedef anahtar kelimeler belirlenmeli ve bu kelimeler etrafında zengin, bilgilendirici ve optimize edilmiş içerikler üretilmelidir.
+              </li>
+              <li>
+                <strong>Kullanıcı Dostu ve Modern Arayüz Tasarımı:</strong>
+                Kullanıcıların site içinde kolayca gezinebileceği, estetik ve işlevsel bir tasarım benimsenmelidir.
+              </li>
+              <li>
+                <strong>Görsel Optimizasyonu:</strong>
+                Tüm görseller, site hızını olumsuz etkilemeyecek şekilde optimize edilmelidir.
+              </li>
+            </ol>
+          </div>
+          
+          <div class="content-section">
+            <p><strong>Yeni web sitesi geliştirilirken,</strong> site haritası (sitemap.xml), robots.txt dosyası, canonical etiketler, yapılandırılmış veri işaretlemeleri (schema markup) gibi teknik SEO unsurları detaylıca incelenmeli ve doğru bir şekilde uygulanmalıdır.</p>
+            
+            <p><strong>Kullanıcı deneyimi açısından,</strong> gezinme kolaylığı, ürün filtreleme seçenekleri, arama fonksiyonu ve satın alma süreci daha akıcı ve sezgisel hale getirilmelidir. Kullanıcıların site içinde rahatça hareket edebilmesi ve istedikleri bilgilere kolayca ulaşabilmesi, dönüşüm oranlarını artıracaktır.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <p class="footer-text">Bu rapor <a href="#" target="_blank">Ykbsoft</a> tarafından Palmera Mobilya için özel olarak hazırlanmıştır</p>
+    </footer>
+  </div>
+
+  <script>
+    // Chart.js Konfigürasyonu
+    let performanceChart, seoChart, securityChart, trendChart, mobileChart, speedChart;
+
+    function getChartColors() {
+      return {
+        primary: '#4299e1',
+        secondary: '#ed8936',
+        accent: '#38b2ac',
+        success: '#48bb78',
+        warning: '#ed8936',
+        danger: '#f56565',
+        purple: '#9f7aea',
+        pink: '#ed64a6',
+        text: '#e2e8f0',
+        grid: 'rgba(255,255,255,0.1)',
+        background: 'rgba(22, 27, 34, 0.8)'
+      };
+    }
+
+    function createPerformanceChart() {
+      const ctx = document.getElementById('performanceChart').getContext('2d');
+      const colors = getChartColors();
+      
+      performanceChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Güvenlik', 'İçerik', 'Performans', 'Erişilebilirlik', 'Teknik SEO', 'Mobil Uyum'],
+          datasets: [{
+            label: 'Skor',
+            data: [88, 70, 42, 65, 55, 58],
+            backgroundColor: [
+              colors.success,
+              colors.warning,
+              colors.danger,
+              colors.warning,
+              colors.accent,
+              colors.warning
+            ],
+            borderRadius: 8,
+            borderSkipped: false,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: colors.background,
+              titleColor: colors.text,
+              bodyColor: colors.text,
+              borderColor: colors.primary,
+              borderWidth: 1,
+              cornerRadius: 8,
+              callbacks: {
+                label: (context) => `Skor: ${context.raw}/100`
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              grid: { color: colors.grid },
+              ticks: { color: colors.text }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: colors.text }
+            }
+          }
+        }
+      });
+    }
+
+    function createSEOChart() {
+      const ctx = document.getElementById('seoChart').getContext('2d');
+      const colors = getChartColors();
+      
+      seoChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Teknik SEO', 'İçerik Optimizasyonu', 'Backlink Stratejisi', 'Local SEO'],
+          datasets: [{
+            data: [30, 40, 20, 10],
+            backgroundColor: [colors.primary, colors.success, colors.secondary, colors.purple],
+            borderWidth: 0,
+            cutout: '60%'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: colors.text,
+                usePointStyle: true,
+                padding: 15
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function createSecurityChart() {
+      const ctx = document.getElementById('securityChart').getContext('2d');
+      const colors = getChartColors();
+      
+      securityChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Güvenlik Başlıkları', 'SSL/TLS', 'Versiyon Güncelliği', 'Firewall'],
+          datasets: [{
+            data: [45, 35, 15, 5],
+            backgroundColor: [colors.danger, colors.success, colors.warning, colors.accent],
+            borderWidth: 0,
+            cutout: '60%'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: colors.text,
+                usePointStyle: true,
+                padding: 15
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function createMobileChart() {
+      const ctx = document.getElementById('mobileChart').getContext('2d');
+      const colors = getChartColors();
+      
+      mobileChart = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: ['Hız', 'Kullanılabilirlik', 'Responsive', 'Touch Friendly', 'Viewport'],
+          datasets: [{
+            label: 'Mobil Performans',
+            data: [45, 70, 85, 60, 90],
+            backgroundColor: colors.primary + '20',
+            borderColor: colors.primary,
+            borderWidth: 2,
+            pointBackgroundColor: colors.primary,
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: colors.primary
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: { color: colors.text }
+            }
+          },
+          scales: {
+            r: {
+              beginAtZero: true,
+              max: 100,
+              grid: { color: colors.grid },
+              pointLabels: { color: colors.text },
+              ticks: { color: colors.text, display: false }
+            }
+          }
+        }
+      });
+    }
+
+    function createSpeedChart() {
+      const ctx = document.getElementById('speedChart').getContext('2d');
+      const colors = getChartColors();
+      
+      speedChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['FCP', 'LCP', 'CLS', 'FID', 'TTFB'],
+          datasets: [{
+            label: 'Skor',
+            data: [65, 42, 78, 55, 35],
+            backgroundColor: [
+              colors.warning,
+              colors.danger,
+              colors.success,
+              colors.warning,
+              colors.danger
+            ],
+            borderRadius: 6,
+            borderSkipped: false,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: colors.background,
+              titleColor: colors.text,
+              bodyColor: colors.text,
+              borderColor: colors.primary,
+              borderWidth: 1,
+              cornerRadius: 8,
+              callbacks: {
+                label: (context) => `Skor: ${context.raw}/100`
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              grid: { color: colors.grid },
+              ticks: { color: colors.text }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: colors.text }
+            }
+          }
+        }
+      });
+    }
+
+    function createTrendChart() {
+      const ctx = document.getElementById('trendChart').getContext('2d');
+      const colors = getChartColors();
+      
+      trendChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz'],
+          datasets: [
+            {
+              label: 'Performans Skoru',
+              data: [35, 38, 42, 39, 41, 40, 42],
+              borderColor: colors.primary,
+              backgroundColor: colors.primary + '20',
+              tension: 0.4,
+              fill: true
+            },
+            {
+              label: 'SEO Skoru',
+              data: [60, 65, 68, 70, 69, 71, 70],
+              borderColor: colors.success,
+              backgroundColor: colors.success + '20',
+              tension: 0.4,
+              fill: true
+            },
+            {
+              label: 'Güvenlik Skoru',
+              data: [80, 82, 85, 87, 86, 88, 88],
+              borderColor: colors.accent,
+              backgroundColor: colors.accent + '20',
+              tension: 0.4,
+              fill: true
+            },
+            {
+              label: 'Mobil Skoru',
+              data: [50, 52, 55, 58, 56, 58, 58],
+              borderColor: colors.purple,
+              backgroundColor: colors.purple + '20',
+              tension: 0.4,
+              fill: true
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: { color: colors.text }
+            },
+            tooltip: {
+              backgroundColor: colors.background,
+              titleColor: colors.text,
+              bodyColor: colors.text,
+              borderColor: colors.primary,
+              borderWidth: 1,
+              cornerRadius: 8
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              grid: { color: colors.grid },
+              ticks: { color: colors.text }
+            },
+            x: {
+              grid: { color: colors.grid },
+              ticks: { color: colors.text }
+            }
+          }
+        }
+      });
+    }
+
+    // Initialize all charts
+    document.addEventListener('DOMContentLoaded', () => {
+      createPerformanceChart();
+      createSEOChart();
+      createSecurityChart();
+      createMobileChart();
+      createSpeedChart();
+      createTrendChart();
+    });
+  </script>
+
+</body>
+</html>
+
